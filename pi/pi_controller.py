@@ -2,14 +2,37 @@ import requests
 import time
 import random
 import click
+from sense_hat import SenseHat
+global sense
+sense = SenseHat()
+
+def wait_for_sense_hat():
+  while True:
+    for event in sense.stick.get_events():
+        print(event)
+        if event.action == "pressed":
+            if event.direction == "up":
+                return 'w'
+            elif event.direction == "down":
+                return 's'    
+            elif event.direction == "left": 
+                return 'd'
+            elif event.direction == "right":
+                return 'a'   
+            else:
+                return 'sss'    
+        sense.clear()
+
 
 
 # Replace with your own function in Part 1
 def get_direction():
+    
     d_long = 0
     d_la = 0
     send_vel = False
-    c = click.getchar()
+    c = wait_for_sense_hat()
+    print(c)
     if c =='a':
         click.echo('Left')
         send_vel = True
@@ -20,12 +43,12 @@ def get_direction():
         send_vel = True
         d_long = 1
         d_la = 0
-    elif c =='w':
+    elif c == 's':
         click.echo('Up')
         send_vel = True
         d_long = 0
         d_la = 1
-    elif c == 's':
+    elif c == 'w':
         click.echo('Down')
         send_vel = True
         d_long = 0
@@ -36,6 +59,7 @@ def get_direction():
         click.echo('Invalid input :(')
         send_vel = False
     return d_long, d_la, send_vel
+
 
 
 if __name__ == "__main__":
